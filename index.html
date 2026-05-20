@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uang Masuk & Keluar BM 2016-2027</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Header -->
+    <nav class="bg-blue-600 p-4 text-white shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold">BM</div>
+                <h1 class="text-xl font-bold">Uang Masuk Dan Keluar BM 2016-2027</h1>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <main class="container mx-auto p-4">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
+                <p class="text-sm text-gray-500">Total Uang Masuk</p>
+                <h2 class="text-2xl font-bold text-green-600">Rp 0</h2>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-500">
+                <p class="text-sm text-gray-500">Total Uang Keluar</p>
+                <h2 class="text-2xl font-bold text-red-600">Rp 0</h2>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
+                <p class="text-sm text-gray-500">Saldo Sisa</p>
+                <h2 class="text-2xl font-bold text-blue-600">Rp 0</h2>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex gap-2">
+                <select class="border rounded p-2 text-sm">
+                    <option>Semua Data</option>
+                    <option>Mingguan</option>
+                    <option>Bulanan</option>
+                </select>
+                <input type="date" class="border rounded p-2 text-sm">
+                <input type="date" class="border rounded p-2 text-sm">
+            </div>
+            <div class="flex gap-2">
+                <button class="bg-emerald-600 text-white px-4 py-2 rounded text-sm font-medium">Export</button>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium">Tambah Data</button>
+            </div>
+        </div>
+
+        <!-- Table Data -->
+        <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-blue-500 text-white">
+                    <tr>
+                        <th class="p-3 text-sm">ID</th>
+                        <th class="p-3 text-sm">Tanggal</th>
+                        <th class="p-3 text-sm">Jenis</th>
+                        <th class="p-3 text-sm">Kategori</th>
+                        <th class="p-3 text-sm">Jumlah (Rp)</th>
+                        <th class="p-3 text-sm">Metode</th>
+                        <th class="p-3 text-sm">Deskripsi</th>
+                        <th class="p-3 text-sm">File</th>
+                        <th class="p-3 text-sm">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 text-sm">1</td>
+                        <td class="p-3 text-sm">2026-05-20</td>
+                        <td class="p-3 text-sm">Pemasukan</td>
+                        <td class="p-3 text-sm">Iuran Anggota</td>
+                        <td class="p-3 text-sm">50.000</td>
+                        <td class="p-3 text-sm">Transfer</td>
+                        <td class="p-3 text-sm">Pembayaran rutin</td>
+                        <td class="p-3 text-sm text-blue-600 underline cursor-pointer">Lihat File</td>
+                        <td class="p-3 text-sm flex gap-3">
+                            <button class="text-blue-600 hover:text-blue-800" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800" title="Hapus">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        function loadData() {
+            if (typeof google !== 'undefined' && google.script) {
+                google.script.run.withSuccessHandler(function(data) {
+                    console.log("Data dimuat dari Sheets:", data);
+                }).getDataFromSheet();
+            }
+        }
+        window.onload = loadData;
+    </script>
+    <script>
+  // Fungsi untuk menarik data dari Google Sheets secara otomatis saat halaman dimuat
+  function loadTable() {
+    // google.script.run adalah "jembatan" untuk memanggil fungsi di Code.gs
+    google.script.run.withSuccessHandler(function(data) {
+      
+      let tbody = document.querySelector('tbody');
+      tbody.innerHTML = ''; // Kosongkan tabel sebelum diisi data baru
+      
+      // Loop untuk setiap baris data dari spreadsheet
+      data.forEach(function(row) {
+        let tr = document.createElement('tr');
+        tr.className = "hover:bg-gray-50";
+        
+        // Memasukkan data ke dalam kolom-kolom tabel
+        tr.innerHTML = `
+          <td class="p-3 text-sm">${row[0]}</td> <!-- ID -->
+          <td class="p-3 text-sm">${row[1]}</td> <!-- Tanggal -->
+          <td class="p-3 text-sm">${row[2]}</td> <!-- Jenis -->
+          <td class="p-3 text-sm">${row[3]}</td> <!-- Kategori -->
+          <td class="p-3 text-sm">${row[4]}</td> <!-- Jumlah -->
+          <td class="p-3 text-sm">${row[5]}</td> <!-- Metode -->
+          <td class="p-3 text-sm">${row[6]}</td> <!-- Deskripsi -->
+          <td class="p-3 text-sm">${row[7] ? 'Lihat File' : '-'}</td> <!-- Foto -->
+          <td class="p-3 text-sm flex gap-3">
+             <<button class="text-blue-600 hover:text-blue-800" title="Edit" onclick="editData('${row[0]}')">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+</button>
+<button class="text-red-600 hover:text-red-800" title="Hapus" onclick="hapusData('${row[0]}')">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+</button>>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }).getDataFromSheet(); // Ini memanggil fungsi getDataFromSheet di Code.gs
+  }
+  
+  // Perintah agar fungsi loadTable berjalan saat halaman terbuka
+  window.onload = loadTable;
+</script>
+</body>
+</html>
