@@ -8,7 +8,6 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
 
-    <!-- Header -->
     <nav class="bg-blue-600 p-4 text-white shadow-lg">
         <div class="container mx-auto flex items-center gap-3">
             <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold">BM</div>
@@ -21,107 +20,121 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
                 <p class="text-sm text-gray-500">Total Uang Masuk</p>
-                <h2 class="text-2xl font-bold text-green-600">Rp 0</h2>
+                <h2 id="total-masuk" class="text-2xl font-bold text-green-600">Rp 0</h2>
             </div>
             <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-500">
                 <p class="text-sm text-gray-500">Total Uang Keluar</p>
-                <h2 class="text-2xl font-bold text-red-600">Rp 0</h2>
+                <h2 id="total-keluar" class="text-2xl font-bold text-red-600">Rp 0</h2>
             </div>
             <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
                 <p class="text-sm text-gray-500">Saldo Sisa</p>
-                <h2 class="text-2xl font-bold text-blue-600">Rp 0</h2>
+                <h2 id="saldo-sisa" class="text-2xl font-bold text-blue-600">Rp 0</h2>
             </div>
         </div>
 
         <!-- Toolbar -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-center justify-between">
-            <div class="flex gap-2">
-                <select class="border rounded p-2 text-sm">
-                    <option>Semua Data</option>
-                    <option>Mingguan</option>
-                    <option>Bulanan</option>
-                </select>
-                <input type="date" class="border rounded p-2 text-sm">
-                <input type="date" class="border rounded p-2 text-sm">
-            </div>
-            <div class="flex gap-2">
-                <button class="bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700">Export</button>
-                <button onclick="bukaFormTambah()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">Tambah Data</button>
-            </div>
+        <div class="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-center">
+            <input type="date" id="tgl-mulai" class="border rounded p-2 text-sm">
+            <input type="date" id="tgl-selesai" class="border rounded p-2 text-sm">
+            <button onclick="filterBerdasarkanTanggal()" class="bg-gray-800 text-white px-4 py-2 rounded text-sm hover:bg-gray-900">Cari Data</button>
+            <button onclick="modalTambah.showModal()" class="ml-auto bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">+ Tambah Data</button>
         </div>
 
         <!-- Table -->
         <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-blue-500 text-white">
-                    <tr>
-                        <th class="p-3 text-sm">ID</th>
-                        <th class="p-3 text-sm">Tanggal</th>
-                        <th class="p-3 text-sm">Jenis</th>
-                        <th class="p-3 text-sm">Kategori</th>
-                        <th class="p-3 text-sm">Jumlah (Rp)</th>
-                        <th class="p-3 text-sm">Metode</th>
-                        <th class="p-3 text-sm">Deskripsi</th>
-                        <th class="p-3 text-sm">File</th>
-                        <th class="p-3 text-sm">Aksi</th>
-                    </tr>
+                    <tr><th class="p-3 text-sm">ID</th><th class="p-3 text-sm">Tanggal</th><th class="p-3 text-sm">Jenis</th><th class="p-3 text-sm">Kategori</th><th class="p-3 text-sm">Jumlah</th><th class="p-3 text-sm">Metode</th><th class="p-3 text-sm">Aksi</th></tr>
                 </thead>
-                <tbody id="tabel-data" class="divide-y text-gray-700">
-                    <!-- Data akan muncul di sini -->
-                </tbody>
+                <tbody id="tabel-data" class="divide-y text-gray-700"></tbody>
             </table>
         </div>
     </main>
 
+    <!-- Modal Form -->
+    <dialog id="modalTambah" class="p-0 rounded-lg shadow-xl w-full max-w-md">
+        <form id="form-catatan" class="p-6">
+            <h2 class="text-lg font-bold mb-4 text-blue-600">Tambah/Edit Catatan</h2>
+            <div class="space-y-4">
+                <input type="date" required class="w-full border p-2 rounded" id="form-tgl">
+                <select class="w-full border p-2 rounded" id="form-jenis">
+                    <option>Pemasukan</option>
+                    <option>Pengeluaran</option>
+                </select>
+                <input type="text" placeholder="Kategori" required class="w-full border p-2 rounded" id="form-kat">
+                <input type="number" placeholder="Masukkan jumlah (Rp)" required class="w-full border p-2 rounded" id="form-jml">
+                <select class="w-full border p-2 rounded" id="form-metode">
+                    <option>Cash</option>
+                    <option>Transfer</option>
+                </select>
+                <input type="file" class="w-full border p-2 rounded">
+            </div>
+            <div class="flex gap-2 mt-6 justify-end">
+                <button type="button" onclick="modalTambah.close()" class="px-4 py-2 bg-gray-200 rounded">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+            </div>
+        </form>
+    </dialog>
+
     <script>
-        function loadTable() {
-            google.script.run.withSuccessHandler(function(data) {
-                let tbody = document.getElementById('tabel-data');
-                tbody.innerHTML = '';
-                data.forEach(function(row) {
-                    tbody.innerHTML += `<tr>
-                        <td class="p-3 text-sm">${row[0]}</td>
-                        <td class="p-3 text-sm">${row[1]}</td>
-                        <td class="p-3 text-sm">${row[2]}</td>
-                        <td class="p-3 text-sm">${row[3]}</td>
-                        <td class="p-3 text-sm">${row[4]}</td>
-                        <td class="p-3 text-sm">${row[5]}</td>
-                        <td class="p-3 text-sm">${row[6]}</td>
-                        <td class="p-3 text-sm text-blue-600 underline cursor-pointer">Lihat File</td>
-                        <td class="p-3 text-sm flex gap-3">
-                            <button class="text-blue-600">Edit</button>
-                            <button onclick="hapusData('${row[0]}')" class="text-red-600">Hapus</button>
-                        </td>
-                    </tr>`;
-                });
-            }).getDataFromSheet();
-        }
+        let dataGlobal = [];
+        const modalTambah = document.getElementById('modalTambah');
 
-        function bukaFormTambah() {
-            let id = prompt("Masukkan ID:");
-            if(!id) return;
-            let tgl = prompt("Tanggal (YYYY-MM-DD):");
-            let jns = prompt("Jenis:");
-            let kat = prompt("Kategori:");
-            let jml = prompt("Jumlah:");
-            let met = prompt("Metode:");
-            let des = prompt("Deskripsi:");
-
-            google.script.run.withSuccessHandler(function() {
-                alert("Data berhasil disimpan!");
-                loadTable();
-            }).tambahData([id, tgl, jns, kat, jml, met, des, "-"]);
-        }
-
-        function hapusData(id) {
-            if(confirm("Yakin ingin menghapus ID " + id + "?")) {
-                google.script.run.withSuccessHandler(function() {
-                    loadTable();
-                }).hapusData(id);
+        window.onload = function() {
+            if (typeof google !== 'undefined' && google.script) {
+                google.script.run.withSuccessHandler(data => dataGlobal = data).getDataFromSheet();
             }
+        };
+
+        // Simpan Data
+        document.getElementById('form-catatan').onsubmit = function(e) {
+            e.preventDefault();
+            let dataBaru = [
+                Date.now(), // ID unik sederhana
+                document.getElementById('form-tgl').value,
+                document.getElementById('form-jenis').value,
+                document.getElementById('form-kat').value,
+                document.getElementById('form-jml').value,
+                document.getElementById('form-metode').value,
+                "-", "-"
+            ];
+            
+            if (typeof google !== 'undefined' && google.script) {
+                google.script.run.withSuccessHandler(() => {
+                    modalTambah.close();
+                    alert("Data berhasil disimpan!");
+                    window.location.reload();
+                }).tambahData(dataBaru);
+            }
+        };
+
+        function filterBerdasarkanTanggal() {
+            let tglMulai = document.getElementById('tgl-mulai').value;
+            let tglSelesai = document.getElementById('tgl-selesai').value;
+            let filtered = dataGlobal.filter(row => row[1] >= tglMulai && row[1] <= tglSelesai);
+            
+            let totalMasuk = 0, totalKeluar = 0;
+            filtered.forEach(row => {
+                let j = parseFloat(row[4]) || 0;
+                row[2].toLowerCase() === 'pemasukan' ? totalMasuk += j : totalKeluar += j;
+            });
+
+            document.getElementById('total-masuk').innerText = 'Rp ' + totalMasuk.toLocaleString('id-ID');
+            document.getElementById('total-keluar').innerText = 'Rp ' + totalKeluar.toLocaleString('id-ID');
+            document.getElementById('saldo-sisa').innerText = 'Rp ' + (totalMasuk - totalKeluar).toLocaleString('id-ID');
+
+            renderTabel(filtered);
         }
 
-        window.onload = loadTable;
+        function renderTabel(data) {
+            let tbody = document.getElementById('tabel-data');
+            tbody.innerHTML = data.map(row => `<tr>
+                <td class="p-3 text-sm">${row[0]}</td><td class="p-3 text-sm">${row[1]}</td>
+                <td class="p-3 text-sm">${row[2]}</td><td class="p-3 text-sm">${row[3]}</td>
+                <td class="p-3 text-sm">${row[4]}</td><td class="p-3 text-sm">${row[5]}</td>
+                <td class="p-3 text-sm"><button onclick="hapusData('${row[0]}')" class="text-red-600">Hapus</button></td>
+            </tr>`).join('');
+        }
     </script>
 </body>
 </html>
