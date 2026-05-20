@@ -54,20 +54,19 @@
     <!-- Modal Form -->
     <dialog id="modalTambah" class="p-0 rounded-lg shadow-xl w-full max-w-md">
         <form id="form-catatan" class="p-6">
-            <h2 class="text-lg font-bold mb-4 text-blue-600">Tambah/Edit Catatan</h2>
+            <h2 class="text-lg font-bold mb-4 text-blue-600">Tambah Data Keuangan</h2>
             <div class="space-y-4">
                 <input type="date" required class="w-full border p-2 rounded" id="form-tgl">
                 <select class="w-full border p-2 rounded" id="form-jenis">
-                    <option>Pemasukan</option>
-                    <option>Pengeluaran</option>
+                    <option value="Pemasukan">Pemasukan</option>
+                    <option value="Pengeluaran">Pengeluaran</option>
                 </select>
                 <input type="text" placeholder="Kategori" required class="w-full border p-2 rounded" id="form-kat">
-                <input type="number" placeholder="Masukkan jumlah (Rp)" required class="w-full border p-2 rounded" id="form-jml">
+                <input type="text" placeholder="Masukkan jumlah (Rp)" required class="w-full border p-2 rounded" id="form-jml" oninput="formatRupiah(this)">
                 <select class="w-full border p-2 rounded" id="form-metode">
-                    <option>Cash</option>
-                    <option>Transfer</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Transfer">Transfer</option>
                 </select>
-                <input type="file" class="w-full border p-2 rounded">
             </div>
             <div class="flex gap-2 mt-6 justify-end">
                 <button type="button" onclick="modalTambah.close()" class="px-4 py-2 bg-gray-200 rounded">Batal</button>
@@ -80,21 +79,27 @@
         let dataGlobal = [];
         const modalTambah = document.getElementById('modalTambah');
 
+        // Fungsi format Rupiah otomatis
+        function formatRupiah(input) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
         window.onload = function() {
             if (typeof google !== 'undefined' && google.script) {
                 google.script.run.withSuccessHandler(data => dataGlobal = data).getDataFromSheet();
             }
         };
 
-        // Simpan Data
         document.getElementById('form-catatan').onsubmit = function(e) {
             e.preventDefault();
+            let rawJumlah = document.getElementById('form-jml').value.replace(/\./g, '');
             let dataBaru = [
-                Date.now(), // ID unik sederhana
+                Date.now(),
                 document.getElementById('form-tgl').value,
                 document.getElementById('form-jenis').value,
                 document.getElementById('form-kat').value,
-                document.getElementById('form-jml').value,
+                rawJumlah,
                 document.getElementById('form-metode').value,
                 "-", "-"
             ];
@@ -131,7 +136,8 @@
             tbody.innerHTML = data.map(row => `<tr>
                 <td class="p-3 text-sm">${row[0]}</td><td class="p-3 text-sm">${row[1]}</td>
                 <td class="p-3 text-sm">${row[2]}</td><td class="p-3 text-sm">${row[3]}</td>
-                <td class="p-3 text-sm">${row[4]}</td><td class="p-3 text-sm">${row[5]}</td>
+                <td class="p-3 text-sm">${parseInt(row[4]).toLocaleString('id-ID')}</td>
+                <td class="p-3 text-sm">${row[5]}</td>
                 <td class="p-3 text-sm"><button onclick="hapusData('${row[0]}')" class="text-red-600">Hapus</button></td>
             </tr>`).join('');
         }
