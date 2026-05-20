@@ -16,7 +16,6 @@
     </nav>
 
     <main class="container mx-auto p-4">
-        <!-- Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
                 <p class="text-sm text-gray-500">Total Uang Masuk</p>
@@ -32,7 +31,6 @@
             </div>
         </div>
 
-        <!-- Toolbar -->
         <div class="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-center">
             <input type="date" id="tgl-mulai" class="border rounded p-2 text-sm">
             <input type="date" id="tgl-selesai" class="border rounded p-2 text-sm">
@@ -40,7 +38,6 @@
             <button onclick="modalTambah.showModal()" class="ml-auto bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">+ Tambah Data</button>
         </div>
 
-        <!-- Table -->
         <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-blue-500 text-white">
@@ -51,7 +48,6 @@
         </div>
     </main>
 
-    <!-- Modal Form -->
     <dialog id="modalTambah" class="p-0 rounded-lg shadow-xl w-full max-w-md">
         <form id="form-catatan" class="p-6">
             <h2 class="text-lg font-bold mb-4 text-blue-600">Tambah Data Keuangan</h2>
@@ -61,12 +57,24 @@
                     <option value="Pemasukan">Pemasukan</option>
                     <option value="Pengeluaran">Pengeluaran</option>
                 </select>
-                <input type="text" placeholder="Kategori" required class="w-full border p-2 rounded" id="form-kat">
+                <select class="w-full border p-2 rounded" id="form-kat" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="Kas Bulanan">Kas Bulanan</option>
+                    <option value="Iuran Lapangan">Iuran Lapangan</option>
+                    <option value="Makanan">Makanan</option>
+                    <option value="Minuman">Minuman</option>
+                    <option value="Obat-obatan">Obat-obatan</option>
+                    <option value="Dan Lain-lain">Dan Lain-lain</option>
+                </select>
                 <input type="text" placeholder="Masukkan jumlah (Rp)" required class="w-full border p-2 rounded" id="form-jml" oninput="formatRupiah(this)">
                 <select class="w-full border p-2 rounded" id="form-metode">
                     <option value="Cash">Cash</option>
                     <option value="Transfer">Transfer</option>
                 </select>
+                <div>
+                    <label class="block text-sm text-gray-600">Upload Bukti Foto:</label>
+                    <input type="file" id="form-foto" class="w-full border p-2 rounded" accept="image/*">
+                </div>
             </div>
             <div class="flex gap-2 mt-6 justify-end">
                 <button type="button" onclick="modalTambah.close()" class="px-4 py-2 bg-gray-200 rounded">Batal</button>
@@ -79,7 +87,6 @@
         let dataGlobal = [];
         const modalTambah = document.getElementById('modalTambah');
 
-        // Fungsi format Rupiah otomatis
         function formatRupiah(input) {
             let value = input.value.replace(/[^0-9]/g, '');
             input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -87,13 +94,17 @@
 
         window.onload = function() {
             if (typeof google !== 'undefined' && google.script) {
-                google.script.run.withSuccessHandler(data => dataGlobal = data).getDataFromSheet();
+                google.script.run.withSuccessHandler(data => { dataGlobal = data; }).getDataFromSheet();
             }
         };
 
         document.getElementById('form-catatan').onsubmit = function(e) {
             e.preventDefault();
             let rawJumlah = document.getElementById('form-jml').value.replace(/\./g, '');
+            let fileInput = document.getElementById('form-foto');
+            
+            // Catatan: Google Apps Script tidak langsung menerima file dari input file HTML tanpa pembacaan FileReader
+            // Data sementara dikirim sebagai string "-" untuk foto sampai sistem upload disiapkan
             let dataBaru = [
                 Date.now(),
                 document.getElementById('form-tgl').value,
@@ -101,15 +112,19 @@
                 document.getElementById('form-kat').value,
                 rawJumlah,
                 document.getElementById('form-metode').value,
-                "-", "-"
+                "-", 
+                fileInput.files.length > 0 ? "Ada File" : "-"
             ];
             
             if (typeof google !== 'undefined' && google.script) {
                 google.script.run.withSuccessHandler(() => {
                     modalTambah.close();
                     alert("Data berhasil disimpan!");
-                    window.location.reload();
+                    google.script.run.withSuccessHandler(data => { dataGlobal = data; }).getDataFromSheet();
                 }).tambahData(dataBaru);
+            } else {
+                console.log("Simulasi simpan:", dataBaru);
+                alert("Data berhasil disimulasikan!");
             }
         };
 
