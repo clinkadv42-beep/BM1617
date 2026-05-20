@@ -41,7 +41,7 @@
         <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-blue-500 text-white">
-                    <tr><th class="p-3 text-sm">ID</th><th class="p-3 text-sm">Tanggal</th><th class="p-3 text-sm">Jenis</th><th class="p-3 text-sm">Kategori</th><th class="p-3 text-sm">Jumlah</th><th class="p-3 text-sm">Metode</th><th class="p-3 text-sm">Aksi</th></tr>
+                    <tr><th class="p-3 text-sm">ID</th><th class="p-3 text-sm">Tanggal</th><th class="p-3 text-sm">Jenis</th><th class="p-3 text-sm">Kategori</th><th class="p-3 text-sm">Jumlah</th><th class="p-3 text-sm">Metode</th><th class="p-3 text-sm">Deskripsi</th><th class="p-3 text-sm">Aksi</th></tr>
                 </thead>
                 <tbody id="tabel-data" class="divide-y text-gray-700"></tbody>
             </table>
@@ -71,6 +71,7 @@
                     <option value="Cash">Cash</option>
                     <option value="Transfer">Transfer</option>
                 </select>
+                <input type="text" placeholder="Deskripsi/Keterangan" class="w-full border p-2 rounded" id="form-desk">
                 <div>
                     <label class="block text-sm text-gray-600">Upload Bukti Foto:</label>
                     <input type="file" id="form-foto" class="w-full border p-2 rounded" accept="image/*">
@@ -103,8 +104,6 @@
             let rawJumlah = document.getElementById('form-jml').value.replace(/\./g, '');
             let fileInput = document.getElementById('form-foto');
             
-            // Catatan: Google Apps Script tidak langsung menerima file dari input file HTML tanpa pembacaan FileReader
-            // Data sementara dikirim sebagai string "-" untuk foto sampai sistem upload disiapkan
             let dataBaru = [
                 Date.now(),
                 document.getElementById('form-tgl').value,
@@ -112,7 +111,7 @@
                 document.getElementById('form-kat').value,
                 rawJumlah,
                 document.getElementById('form-metode').value,
-                "-", 
+                document.getElementById('form-desk').value,
                 fileInput.files.length > 0 ? "Ada File" : "-"
             ];
             
@@ -153,6 +152,7 @@
                 <td class="p-3 text-sm">${row[2]}</td><td class="p-3 text-sm">${row[3]}</td>
                 <td class="p-3 text-sm">${parseInt(row[4]).toLocaleString('id-ID')}</td>
                 <td class="p-3 text-sm">${row[5]}</td>
+                <td class="p-3 text-sm">${row[6]}</td>
                 <td class="p-3 text-sm"><button onclick="hapusData('${row[0]}')" class="text-red-600">Hapus</button></td>
             </tr>`).join('');
         }
